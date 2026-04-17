@@ -5,7 +5,7 @@ import streamlit as st
 
 st.set_page_config(page_title="LuminaFlow Secure Upload", page_icon="🛡️", layout="centered")
 
-BRAND_NAME = "LuminaFlow"
+BRAND_NAME = "VitalSeconds"
 MAX_SAMPLE_BYTES = 256 * 1024
 TIMESTAMP_PATTERNS = ["timestamp", "time", "datetime", "date_time", "disp_time", "enroute", "arrival", "ping_time", "epoch", "unix", "ts"]
 LAT_PATTERNS = ["lat", "latitude", "y_coord"]
