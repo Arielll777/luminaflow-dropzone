@@ -3,7 +3,7 @@ import csv, hashlib, io, json, os, re, tempfile, uuid
 from datetime import datetime, timezone
 import streamlit as st
 
-st.set_page_config(page_title="LuminaFlow Secure Upload", page_icon="🛡️", layout="centered")
+st.set_page_config(page_title="VitalSeconds Secure Upload", page_icon="🛡️", layout="centered")
 
 BRAND_NAME = "VitalSeconds"
 MAX_SAMPLE_BYTES = 256 * 1024
