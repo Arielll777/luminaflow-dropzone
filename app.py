@@ -78,7 +78,7 @@ def compute_sha256(uploaded_file) -> str:
     return sha.hexdigest()
 
 def save_locally(uploaded_file, file_sha256: str) -> dict:
-    tmp_dir = os.path.join(tempfile.gettempdir(), "luminaflow_uploads")
+    tmp_dir = os.path.join(tempfile.gettempdir(), "vitalseconds_uploads")
     os.makedirs(tmp_dir, exist_ok=True)
     path = os.path.join(tmp_dir, f"{uuid.uuid4()}_{uploaded_file.name}")
     uploaded_file.seek(0)
