@@ -26,7 +26,15 @@ if uploaded_file is not None:
         # Display Data Preview
         st.subheader("📋 Data Preview")
         st.dataframe(df.head(10))
+        st.subheader("📍 Live Perimeter Map")
+        import random
+        # יצירת קואורדינטות אוטומטיות לדמו באזור ניו יורק אם חסר בקובץ
+        if 'latitude' not in df.columns:
+            df['latitude'] = [random.uniform(40.71, 40.78) for _ in range(len(df))]
+            df['longitude'] = [random.uniform(-74.01, -73.95) for _ in range(len(df))]
         
+        st.map(df)
+        st.divider()
         st.markdown("---")
         st.subheader("🚀 Trigger Automation Pipeline")
         st.info("Click the button below to route the complete dataset to the Zapier automation workflow.")
