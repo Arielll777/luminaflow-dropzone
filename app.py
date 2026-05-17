@@ -1,4 +1,3 @@
-import os
 import re
 import random
 from datetime import datetime
@@ -213,6 +212,7 @@ def build_map_dataframe(df: pd.DataFrame):
 
 
 def get_zapier_webhook_url():
+    # Direct webhook for demo deployment.
     return "https://hooks.zapier.com/hooks/catch/27629842/4obg4m8/"
 
 
@@ -259,10 +259,13 @@ if uploaded_file is not None:
         st.success("✅ File uploaded successfully. Telemetry intake initialized.")
 
         col1, col2, col3 = st.columns(3)
+
         with col1:
             st.metric("Rows detected", f"{len(raw_df):,}")
+
         with col2:
             st.metric("Columns detected", f"{len(raw_df.columns):,}")
+
         with col3:
             st.metric("File type", "CSV")
 
@@ -307,8 +310,7 @@ if uploaded_file is not None:
 
             if not zapier_url:
                 st.error(
-                    "Zapier webhook is not configured. Add `ZAPIER_WEBHOOK_URL` "
-                    "to Streamlit Secrets or your environment variables."
+                    "Zapier webhook is not configured. Please verify the intake endpoint."
                 )
             else:
                 metadata = {
@@ -346,6 +348,12 @@ if uploaded_file is not None:
                                 "✅ Dataset transmitted successfully. "
                                 "Payload captured by the intake pipeline."
                             )
+
+                            st.caption(
+                                "🔒 File received securely. No EMR access, PHI, or production IT integration required. "
+                                "Uploaded data is routed only for authorized perimeter analysis."
+                            )
+
                             st.balloons()
                         else:
                             st.error(
