@@ -213,16 +213,7 @@ def build_map_dataframe(df: pd.DataFrame):
 
 
 def get_zapier_webhook_url():
-    """
-    Recommended: store your webhook in Streamlit Secrets as:
-    ZAPIER_WEBHOOK_URL = "your webhook here"
-
-    For quick local testing, you can also set it as an environment variable.
-    """
-    try:
-        return st.secrets.get("ZAPIER_WEBHOOK_URL", "")
-    except Exception:
-        return os.getenv("ZAPIER_WEBHOOK_URL", "")
+    return "https://hooks.zapier.com/hooks/catch/27629842/4obg4m8/"
 
 
 # -----------------------------
