@@ -1,166 +1,59 @@
 import streamlit as st
 import pandas as pd
-import time
 import requests
 
-# --- UI Fix: Ensures the 'X' remove button is always visible ---
-st.markdown("""
-    <style>
-    [data-testid="stUploadedFile"] {
-        padding-right: 50px !important;
-        overflow: visible !important;
-    }
-    [data-testid="stUploadedFile"] button {
-        position: absolute !important;
-        right: 0px !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# Page configuration
+st.set_page_config(page_title="VitalSeconds - Data Analysis", layout="wide")
 
-# Base page configuration - Enterprise Grade
-st.set_page_config(page_title="VitalSeconds • Secure Upload", layout="centered", page_icon="🔒")
+# Main Title
+st.title("📊 VitalSeconds - Data Analysis System")
+st.markdown("---")
 
-st.title("Secure Telemetry Upload")
-st.subheader("Phase 1 Perimeter Assessment")
-
-st.markdown("**De-identified operational telemetry intake** — No patient data is ever requested or accepted.")
-
-# Prominent security alert box
-st.success("""
-**Secure & Compliant Upload Portal**
-
-We only accept de-identified vehicle telemetry (GPS breadcrumbs).  
-**Absolutely no PHI, patient names, MRN, or clinical data is allowed or processed.**
-""", icon="🔒")
-
-st.divider()
-
-# File requirements section
-st.subheader("📋 File Requirements")
-
-col1, col2 = st.columns([1, 1])
-with col1:
-    st.write("**Accepted File Type**")
-    st.info("CSV only")
-    st.write("**Maximum File Size**")
-    st.info("200 MB per file")
-
-with col2:
-    st.write("**Required Columns (exactly these 4)**")
-    st.markdown("""
-    | Column       | Description                     |
-    |--------------|---------------------------------|
-    | Vehicle_ID   | Pseudonymous vehicle/unit token |
-    | Timestamp    | Date and time of record         |
-    | Latitude     | GPS latitude                    |
-    | Longitude    | GPS longitude                   |
-    """)
-
-st.caption("Any additional columns will be ignored. Only operational vehicle data is needed.")
-
-st.divider()
-
-# Upload area
-st.subheader("Upload your de-identified telemetry file")
-st.write("Drag and drop your CSV file below")
-
-# --- Essential Feature: Sample Template Download Button ---
-sample_csv = "Vehicle_ID,Timestamp,Latitude,Longitude\nAMB-01,2026-05-16 10:00,40.7128,-74.0060\nAMB-02,2026-05-16 10:05,40.7306,-73.9866\nAMB-03,2026-05-16 10:10,40.7505,-73.9934"
-st.download_button(
-    label="📥 Download Sample CSV Template",
-    data=sample_csv,
-    file_name="test_telemetry.csv",
-    mime="text/csv"
-)
-
+# File Uploader Section
 uploaded_file = st.file_uploader(
-    label="",
+    "Drag and drop your CSV file here or click to browse", 
     type=["csv"],
-    help="Maximum 200 MB • De-identified vehicle GPS logs only",
-    label_visibility="collapsed"
+    help="Please upload a valid CSV data file only"
 )
 
-# Dynamic processing simulation + Data reading
 if uploaded_file is not None:
-    status_placeholder = st.empty()
-    progress_bar = st.progress(0)
-
-    status_placeholder.info("🔍 Validating CSV schema...")
-    for i in range(25):
-        progress_bar.progress(i + 1)
-        time.sleep(0.03)
-
-    status_placeholder.info("✅ Verifying zero-PHI constraints...")
-    for i in range(25, 55):
-        progress_bar.progress(i + 1)
-        time.sleep(0.03)
-
-    status_placeholder.info("📍 Aggregating spatial telemetry...")
-    for i in range(55, 85):
-        progress_bar.progress(i + 1)
-        time.sleep(0.04)
-
-    status_placeholder.info("🔐 Encrypting and securing upload...")
-    for i in range(85, 100):
-        progress_bar.progress(i + 1)
-        time.sleep(0.02)
-
-    progress_bar.progress(100)
-    status_placeholder.success("✅ File uploaded successfully and securely.")
-
-    # Data preview and layout integration
     try:
+        # Read the uploaded CSV data
         df = pd.read_csv(uploaded_file)
-        df.columns = [c.lower().strip() for c in df.columns]
+        
+        st.success("✅ File uploaded and read successfully!")
+        
+        # Display Data Preview
+        st.subheader("📋 Data Preview")
+        st.dataframe(df.head(10))
+        
+        st.markdown("---")
+        st.subheader("🚀 Trigger Automation Pipeline")
+        st.info("Click the button below to route the complete dataset to the Zapier automation workflow.")
 
-        if 'latitude' in df.columns and 'longitude' in df.columns:
-            st.write("---")
-            with st.expander("✅ Data Validation Successful – Telemetry Preview", expanded=True):
-                col_a, col_b = st.columns(2)
-                col_a.metric("Operational Rows Detected", f"{len(df):,}")
-                col_b.metric("Compliance Scan", "Pass (Zero PHI detected)")
-
-                st.caption("📍 GPS telemetry points successfully mapped:")
-                st.map(df[['latitude', 'longitude']])
-
-            # --- Executive Action Section with Live Data Pipeline ---
-            st.write("---")
-            st.subheader("Next Steps")
-            if st.button("🚀 Submit for Full Perimeter Analysis", type="primary", use_container_width=True):
-                
-                # --- Webhook Connection ---
-                WEBHOOK_URL = "כאן_להדביק_את_הלינק_האמיתי_של_זאפייר"
-                
-                try:
-                    payload = {
-                        "file_name": uploaded_file.name,
-                        "file_content": df.to_csv(index=False)
-                    }
-                    
-                    with st.spinner("Routing data through secure perimeter..."):
-                        requests.post(WEBHOOK_URL, json=payload, timeout=10)
-                    
-                    # הצגת הודעת הצלחה פעם אחת בלבד!
-                    st.success("✅ File securely routed to offline environment.")
-                    st.info("Your Perimeter Snapshot will be delivered within 7–10 business days.")
-                    st.balloons()
-                        
-                except Exception:
-                    # הגנה: גם אם האינטרנט נופל, הלקוח רואה הצלחה בדמו
-                    st.success("✅ File securely routed to offline environment.")
-                    st.info("Your Perimeter Snapshot will be delivered within 7–10 business days.")
-                    st.balloons()
-        else:
-            st.warning("⚠️ Uploaded successfully, but 'Latitude' and 'Longitude' columns were not found for preview.")
+        # Submit Button
+        if st.button("🚀 Submit for Full Perimeter Analysis", type="primary"):
+            # Secret Zapier Webhook URL
+            zapier_url = "https://hooks.zapier.com/hooks/catch/19183617/23fsk19/"
             
-    except Exception:
-        st.info("File received. Advanced processing will take place in our secure offline environment.")
+            # Convert DataFrame to records payload
+            payload = df.to_dict(orient="records")
+            
+            with st.spinner("Routing data securely through the perimeter pipeline..."):
+                try:
+                    # Execute the post request
+                    response = requests.post(zapier_url, json={"data": payload}, timeout=10)
+                    
+                    if response.status_code == 200:
+                        st.success("🎉 Data transmitted successfully! Payload captured by Zapier.")
+                        st.balloons()  # Celebration balloons animation
+                    else:
+                        st.error(f"❌ Server responded with an error code: {response.status_code}. Please retry.")
+                except Exception as e:
+                    st.error(f"❌ Communication failure with Zapier endpoint: {str(e)}")
+                    
+    except Exception as e:
+        st.error(f"❌ Error parsing the file. Ensure it is a valid CSV. Details: {str(e)}")
 
-st.divider()
-
-st.caption("""
-**Security & Compliance** This portal is purpose-built for de-identified operational telemetry only. 
-No production integration is required. No PHI or clinical data is ever requested or stored.
-""")
-
-st.caption("© VitalSeconds • All uploads are processed in an isolated environment.")
+else:
+    st.warning("📥 Awaiting CSV file upload to initialize perimeter mapping...")
